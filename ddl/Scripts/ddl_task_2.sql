@@ -1,0 +1,383 @@
+/*
+문제 1: 도서 대출 시스템
+요구사항:
+도서관에서 도서 대출을 관리하는 시스템을 만드려고 합니다.
+회원은 여러 권의 도서를 대출할 수 있으며, 도서는 여러 명의 회원에게 대출될 수 있습니다.
+도서는 고유한 ISBN, 제목, 저자, 출판사가 필요합니다.
+회원은 회원 번호, 이름, 전화번호, 이메일이 필요합니다.
+대출 기록은 대출 날짜, 반납 날짜가 필요합니다.
+
+개념적 모델링
+
+도서			회원			대출기록
+------------------------------------
+아이디		아이디		아이디
+------------------------------------
+번호			이름			도서아이디
+제목			전화번호		회원아이디
+저자			이메일		대출날짜
+출판사					반납날짜
+
+
+논리적 모델링
+
+도서			회원			대출기록
+------------------------------------
+아이디 PK		아이디 PK		아이디 PK
+------------------------------------
+번호	NN		이름 NN		도서아이디 FK
+제목	NN		전화번호 NN	회원아이디 FK
+저자	NN		이메일		대출날짜  DATE
+출판사 NN					반납날짜  DATE
+
+
+물리적 모델링
+
+BOOK
+-------------------------------------
+ID NUMBER CONSTRAINT PK_BOOK PRIMARY KEY,
+-----------------------------------------
+BOOK_NUMBER VARCHAR2(255) NOT NULL,
+BOOK_TITLE VARCHAR2(255) NOT NULL,
+BOOK_AUTHOR VARCHAR2(255) NOT NULL,
+BOOK_PUBLISHER VARCHAR2(255) NOT NULL
+
+MEMBER_5
+--------------------------------------------
+ID NUMBER CONSTRAINT PK_MEMBER_5 PRIMARY KEY,
+--------------------------------------------
+MEMBER_5_NAME VARCHAR2(255) NOT NULL,
+MEMBER_5_PHONE VARCHAR2(255) NOT NULL,
+MEMBER_5_EMAIL VARCHAR2(255) 
+
+LOAN
+--------------------------------------------
+ID NUMBER CONSTRAINT PK_LOAN PRIMARY KEY,
+--------------------------------------------
+BOOK_ID NUMBER NOT NULL,
+CONSTRAINT FK_LOAN_BOOK FOREIGN KEY(BOOK_ID)
+REFERENCES TBL_BOOK(ID),
+MEMBER_5_ID NUMBER NOT NULL,
+CONSTRAINT FK_LOAN_MEMBER_5 FOREIGN KEY(MEMBER_5_ID)
+REFERENCES TBL_MEMBER_5(ID)
+LOAN_DATE DATE DEFAULT CURRENT_TIMESTAMP,
+RETURN_DATE DATE DEFAULT CURRENT_TIMESTAMP
+
+구현
+*/
+
+CREATE TABLE TBL_BOOK(
+	ID NUMBER CONSTRAINT PK_BOOK PRIMARY KEY,
+	BOOK_NUMBER VARCHAR2(255) NOT NULL,
+	BOOK_TITLE VARCHAR2(255) NOT NULL,
+	BOOK_AUTHOR VARCHAR2(255) NOT NULL,
+	BOOK_PUBLISHER VARCHAR2(255) NOT NULL
+);
+
+CREATE TABLE TBL_MEMBER_5(
+	ID NUMBER CONSTRAINT PK_MEMBER_5 PRIMARY KEY,
+	MEMBER_5_NAME VARCHAR2(255) NOT NULL,
+	MEMBER_5_PHONE VARCHAR2(255) NOT NULL,
+	MEMBER_5_EMAIL VARCHAR2(255) 
+);
+
+CREATE TABLE TBL_LOAN(
+	ID NUMBER CONSTRAINT PK_LOAN PRIMARY KEY,
+	BOOK_ID NUMBER NOT NULL,
+	CONSTRAINT FK_LOAN_BOOK FOREIGN KEY(BOOK_ID)
+	REFERENCES TBL_BOOK(ID),
+	MEMBER_5_ID NUMBER NOT NULL,
+	CONSTRAINT FK_LOAN_MEMBER_5 FOREIGN KEY(MEMBER_5_ID)
+	REFERENCES TBL_MEMBER_5(ID),
+	LOAN_DATE DATE DEFAULT CURRENT_TIMESTAMP,
+	RETURN_DATE DATE DEFAULT CURRENT_TIMESTAMP
+);
+
+
+
+/*
+문제 2: 온라인 쇼핑몰 시스템
+요구사항:
+온라인 쇼핑몰에서 상품과 주문을 관리하는 시스템을 만드려고 합니다.
+고객은 여러 개의 주문을 할 수 있으며, 주문은 여러 개의 상품을 포함할 수 있습니다.
+상품은 상품 번호, 이름, 가격, 재고가 필요합니다.
+고객은 고객 번호, 이름, 이메일, 주소가 필요합니다.
+주문은 주문 번호, 주문 날짜, 총액이 필요합니다.
+
+개념적 모델링
+
+상품		고객 		주문 			주문항목
+------------------------------------
+아이디 	아이디 	아이디 		아이디
+------------------------------------
+이름		이름		고객아이디		주문 아이디
+가격		이메일	주문날짜		상품 아이디
+재고		주소		주문총액		수량
+							가격
+
+
+논리적 모델링
+
+상품		고객 			주문 				주문항목
+---------------------------------------------
+아이디 PK	아이디 PK		아이디 PK			아이디 PK
+----------------------------------------------
+이름 NN	이름 NN  		고객아이디 FK		주문 아이디 FK
+가격 D1	이메일		주문날짜 DATE		상품 아이디 FK
+재고 D0	주소	NN U	주문총액 D1		수량 D1
+									가격 D1
+
+물리적 모델링
+
+PRODUCT
+-------------------------------------------------
+ID NUMBER CONSTRAINT PK_PRODUCT PRIMARY KEY,
+--------------------------------------------------
+PRODUCT_NAME VARCHAR2(255) NOT NULL,
+PRODUCT_PRICE NUMBER DEFAULT 1,
+PRODUCT_STOCK NUMBER DEFAULT 0
+
+
+CUSTOMER
+--------------------------------------------------
+ID NUMBER CONSTRAINT PK_CUSTOMER PRIMARY KEY,
+--------------------------------------------------
+CUSTOMER_NAME VARCHAR2(255) NOT NULL,
+CUSTOMER_EMAIL VARCHAR2(255),
+CUSTOMER_ADDRESS VARCHAR2(255) CONSTRAINT UK_CUSTOMER UNIQUE NOT NULL
+
+
+ORDER_2
+----------------------------------------------------------
+ID NUMBER CONSTRAINT PK_ORDER_2 PRIMARY KEY,
+----------------------------------------------------------
+CUSTOMER_ID NUMBER NOT NULL,
+CONSTRAINT FK_ORDER_2_CUSTOMER FOREIGN KEY(CUSTOMER_ID)
+REFERENCES TBL_CUSTOMER(ID),
+ORDER_DATE DATE DEFAULT CURRENT_TIMESTAMP,
+ORDER_2_PRICE NUMBER DEFAULT 1
+
+
+ORDER_ITEM
+-------------------------------------------------------
+ID NUMBER CONSTRAINT PK_ORDER_ITEM PRIMARY KEY,
+-------------------------------------------------------
+ORDER_2_ID NUMBER NOT NULL,
+CONSTRAINT FK_ORDER_ITEM_ORDER_2 FOREIGN KEY(ORDER_2_ID)
+REFERENCES TBL_ORDER_2(ID),
+PRODUCT_ID NUMBER NOT NULL,
+CONSTRAINT FK_ORDER_ITEM_PRODUCT FOREIGN KEY(PRODUCT_ID)
+REFERENCES TBL_PRODUCT(ID),
+QUANTITY NUMBER DEFAULT 1,
+TOTAL_AMOUNT NUMBER DEFAULT 1
+
+
+
+구현
+
+*/
+
+CREATE TABLE TBL_PRODUCT(
+	ID NUMBER CONSTRAINT PK_PRODUCT PRIMARY KEY,
+	PRODUCT_NAME VARCHAR2(255) NOT NULL,
+	PRODUCT_PRICE NUMBER DEFAULT 1,
+	PRODUCT_STOCK NUMBER DEFAULT 0
+);
+
+
+CREATE TABLE TBL_CUSTOMER(
+	ID NUMBER CONSTRAINT PK_CUSTOMER PRIMARY KEY,
+	CUSTOMER_NAME VARCHAR2(255) NOT NULL,
+	CUSTOMER_EMAIL VARCHAR2(255),
+	CUSTOMER_ADDRESS VARCHAR2(255) CONSTRAINT UK_CUSTOMER UNIQUE NOT NULL
+);
+
+
+CREATE TABLE TBL_ORDER_2(
+	ID NUMBER CONSTRAINT PK_ORDER_2 PRIMARY KEY,
+	CUSTOMER_ID NUMBER NOT NULL,
+	CONSTRAINT FK_ORDER_2_CUSTOMER FOREIGN KEY(CUSTOMER_ID)
+	REFERENCES TBL_CUSTOMER(ID),
+	ORDER_DATE DATE DEFAULT CURRENT_TIMESTAMP,
+	ORDER_2_PRICE NUMBER DEFAULT 1
+);
+
+CREATE TABLE TBL_ORDER_ITEM(
+	ID NUMBER CONSTRAINT PK_ORDER_ITEM PRIMARY KEY,
+	ORDER_2_ID NUMBER NOT NULL,
+	CONSTRAINT FK_ORDER_ITEM_ORDER_2 FOREIGN KEY(ORDER_2_ID)
+	REFERENCES TBL_ORDER_2(ID),
+	PRODUCT_ID NUMBER NOT NULL,
+	CONSTRAINT FK_ORDER_ITEM_PRODUCT FOREIGN KEY(PRODUCT_ID)
+	REFERENCES TBL_PRODUCT(ID),
+	QUANTITY NUMBER DEFAULT 1,
+	TOTAL_AMOUNT NUMBER DEFAULT 1
+);
+
+
+
+/*
+문제 3: 교육 관리 시스템
+요구사항:
+교육 기관에서 학원생과 강좌, 강의를 관리하는 시스템을 만드려고 합니다.
+학원생은 여러 강좌를 수강할 수 있으며, 강좌는 여러 학원생이 수강할 수 있습니다.
+학원생은 아이디, 이름, 분야, 학년이 필요합니다.
+강사는 강사 번호, 이름, 분야, 직위가 필요합니다.
+강의는 강사를 연결하며, 강의이름, 강의 시간과 강의실 정보가 필요합니다.
+
+개념적 모델링
+
+학원생		강사			강좌			강의				수강
+--------------------------------------------------------------
+아이디		아이디		아이디		아이디			아이디	
+--------------------------------------------------------------
+이름			이름			이름			시간(오전)			학생아이디	
+분야			분야						시간(오후)			강좌아이디
+학년			직위						강의실			성적
+									강좌아이디
+									강사아이디		
+						
+
+논리적 모델링
+
+학원생		강사			강좌			강의				수강
+--------------------------------------------------------------
+아이디 PK		아이디 PK		아이디 PK		아이디 PK			아이디 PK	
+--------------------------------------------------------------
+이름 NN		이름 NN		이름 NN		시간(오전) DATE	학생아이디 FK	
+분야	NN		분야 NN  					시간(오후)	DATE	강좌아이디 FK
+학년	D1		직위	NN					강의실	NN		성적 NN D1
+									강좌아이디 FK
+									강사아이디	FK	
+
+
+물리적 모델링
+
+ACADEMY_STUDENT
+----------------------------------------------------
+ID NUMBER CONSTRAINT PK_ACADEMY_STUDENT PRIMARY KEY,
+-------------------------------------------------------
+ACADEMY_STUDENT_NAME VARCHAR2(255) NOT NULL,
+ACADEMY_STUDENT_MAJOR VARCHAR2(255) NOT NULL,
+ACADEMY_STUDENT_YEAR NUMBER DEFAULT 1
+
+
+INSTRUCTOR
+------------------------------------------------------
+ID NUMBER CONSTRAINT PK_INSTRUCTOR PRIMARY KEY,
+---------------------------------------------------------
+INSTRUCTOR_NAME VARCHAR2(255) NOT NULL,
+INSTRUCTOR_MAJOR VARCHAR2(255) NOT NULL,
+INSTRUCTOR_POSITION VARCHAR2(255) NOT NULL
+
+
+COURSE
+-----------------------------------------------------------
+ID NUMBER CONSTRAINT PK_COURSE PRIMARY KEY,
+-----------------------------------------------------------
+COURSE_NAME VARCHAR2(255) NOT NULL
+
+
+LECTURE
+-----------------------------------------------------------
+ID NUMBER CONSTRAINT PK_LECTURE PRIMARY KEY,
+-----------------------------------------------------------
+MORNING_DATE DATE DEFAULT CURRENT_TIMESTAMP,
+AFTERNOON_DATE DATE DEFAULT CURRENT_TIMESTAMP,
+ROOM VARCHAR2(255) NOT NULL,
+COURSE_ID NUMBER NOT NULL,
+CONSTRAINT FK_LECTURE_COURSE FOREIGN KEY(COURSE_ID)
+REFERENCES TBL_COURSE(ID),
+INSTRUCTOR_ID NUMBER NOT NULL,
+CONSTRAINT FK_LECTURE_INSTRUCTOR FOREIGN KEY(INSTRUCTOR_ID)
+REFERENCES TBL_INSTRUCTOR(ID)
+
+
+ENROLLMENT
+--------------------------------------------------------------
+ID NUMBER CONSTRAINT PK_ENROLLMENT PRIMARY KEY,
+--------------------------------------------------------------
+ACADEMY_STUDENT_ID NUMBER NOT NULL,
+CONSTRAINT FK_ENROLLMENT_STUDENT FOREIGN KEY(ACADEMY_STUDENT_ID)
+REFERENCES TBL_ACADEMY_STUDENT(ID),
+COURSE_ID NUMBER NOT NULL,
+CONSTRAINT FK_ENROLLMENT_COURSE FOREIGN KEY(COURSE_ID)
+REFERENCES TBL_COURSE(ID),
+ENROLLMENT_GRADE NUMBER NOY NULL DEFAULT 1
+
+
+구현
+*/
+
+CREATE TABLE TBL_ACADEMY_STUDENT(
+	ID NUMBER CONSTRAINT PK_ACADEMY_STUDENT PRIMARY KEY,
+	ACADEMY_STUDENT_NAME VARCHAR2(255) NOT NULL,
+	ACADEMY_STUDENT_MAJOR VARCHAR2(255) NOT NULL,
+	ACADEMY_STUDENT_YEAR NUMBER DEFAULT 1
+);
+
+CREATE TABLE TBL_INSTRUCTOR(
+	ID NUMBER CONSTRAINT PK_INSTRUCTOR PRIMARY KEY,
+	INSTRUCTOR_NAME VARCHAR2(255) NOT NULL,
+	INSTRUCTOR_MAJOR VARCHAR2(255) NOT NULL,
+	INSTRUCTOR_POSITION VARCHAR2(255) NOT NULL
+);
+
+CREATE TABLE TBL_COURSE(
+	ID NUMBER CONSTRAINT PK_COURSE PRIMARY KEY,
+	COURSE_NAME VARCHAR2(255) NOT NULL
+);
+
+CREATE TABLE TBL_LECTURE_1(
+	ID NUMBER CONSTRAINT PK_LECTURE_1 PRIMARY KEY,
+	MORNING_DATE DATE DEFAULT CURRENT_TIMESTAMP,
+	AFTERNOON_DATE DATE DEFAULT CURRENT_TIMESTAMP,
+	ROOM VARCHAR2(255) NOT NULL,
+	COURSE_ID NUMBER NOT NULL,
+	CONSTRAINT FK_LECTURE_1_COURSE FOREIGN KEY(COURSE_ID)
+	REFERENCES TBL_COURSE(ID),
+	INSTRUCTOR_ID NUMBER NOT NULL,
+	CONSTRAINT FK_LECTURE_1_INSTRUCTOR FOREIGN KEY(INSTRUCTOR_ID)
+	REFERENCES TBL_INSTRUCTOR(ID)
+);
+
+CREATE TABLE TBL_ENROLLMENT(
+	ID NUMBER CONSTRAINT PK_ENROLLMENT PRIMARY KEY,
+	ACADEMY_STUDENT_ID NUMBER NOT NULL,
+	CONSTRAINT FK_ENROLLMENT_STUDENT FOREIGN KEY(ACADEMY_STUDENT_ID)
+	REFERENCES TBL_ACADEMY_STUDENT(ID),
+	COURSE_ID NUMBER NOT NULL,
+	CONSTRAINT FK_ENROLLMENT_COURSE FOREIGN KEY(COURSE_ID)
+	REFERENCES TBL_COURSE(ID),
+	ENROLLMENT_GRADE NUMBER DEFAULT 1
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
